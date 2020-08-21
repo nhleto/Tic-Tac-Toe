@@ -70,7 +70,6 @@ class Game
     puts 'That space is taken. Please guess again.'
     player_move
   end
-end
 
   def board_full(board)
     p board
@@ -80,11 +79,12 @@ end
     end
   end
 
-  def clear_board(board)
-    new_board = board.clear
+  def clear_board(boards = board.game_board)
+    new_board = boards.clear
     9.times do
       new_board << ''
     end
+    new_board
   end
 
   def replay
@@ -92,7 +92,8 @@ end
     answer = gets.chomp.upcase until answer == 'Y' || answer == 'N'
 
     if answer == 'Y'
-      clear_board(board.game_board)
+      clear_board
+      system('clear')
       start_game
     else
       puts "\nCya".center(80)
@@ -127,3 +128,7 @@ end
       replay
     end
   end
+end
+
+ttt = Game.new('Henry', 'Sarah')
+ttt.start_game
