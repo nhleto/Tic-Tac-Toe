@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+require 'pry'
 class StringDoc
-  def here_doc
+  def intro_text
     puts <<-HEREDOC
                         The board is seperated into nine quarants:
 
@@ -14,13 +15,29 @@ class StringDoc
   end
 end
 
-
 # creating of display
 class Board
-  attr_accessor :game_board, :move
+  attr_accessor :game_board
   def initialize
     @game_board = ['', '', '', '', '', '', '', '', '']
-    @move = move
+  end
+
+  def open_position?(position)
+    game_board[position] == ''
+  end
+
+  def clear_board
+    new_board = game_board.clear
+    9.times do
+      new_board << ''
+    end
+    new_board
+  end
+
+  def board_full?
+    return unless game_board.all?(/[A-Z]/)
+
+    true
   end
 
   def show_board
@@ -33,9 +50,9 @@ class Board
   end
 end
 
-# creating of game input
+# creation game input
 class Game
-  attr_accessor :board
+  attr_accessor :board, :move
   attr_reader :attempts, :intro
   def initialize(player1, player2)
     @player1 = player1
@@ -43,48 +60,25 @@ class Game
     @intro = StringDoc.new
     @board = Board.new
     @turn = 'X'
+    # @move = move
   end
 
   def start_game
-    intro.here_doc
+    intro.intro_text
     player_move
   end
 
   def player_move
     loop do
       board.show_board
-      x_winner(board.game_board)
-      o_winner(board.game_board)
-      board_full(board.game_board)
+      p board.game_board
+      win_cons
       puts "\n\n\n#{@turn}, make your move".center(80)
       @move = gets.chomp.to_i
-      position_taken(board.game_board, @move)
+      board.open_position?(@move)
       board.game_board[@move] = @turn
       @turn == 'X' ? @turn = 'O' : @turn = 'X'
     end
-  end
-
-  def position_taken(board, index)
-    return if board[index] == ''
-
-    puts 'That space is taken. Please guess again.'
-    player_move
-  end
-
-  def board_full(board)
-    p board
-    if board.all?((/[A-Z]/))
-      puts "Cat's Game!"
-      exit
-    end
-  end
-
-  def clear_board(boards = board.game_board)
-    new_board = boards.clear
-    9.times do
-      new_board << ''
-    end
-    new_board
   end
 
   def replay
@@ -92,7 +86,7 @@ class Game
     answer = gets.chomp.upcase until answer == 'Y' || answer == 'N'
 
     if answer == 'Y'
-      clear_board
+      board.clear_board
       system('clear')
       start_game
     else
@@ -101,7 +95,26 @@ class Game
     end
   end
 
-  def x_winner(board)
+  def cats_game?
+    if board.board_full? == true
+      true
+    end
+  end
+
+  def win_cons
+    if x_winner?(board.game_board) == true
+      puts "#{@player1} is the WINNER!".center(80)
+      replay
+    elsif o_winner?(board.game_board) == true
+      puts "#{@player2} is the WINNER!".center(80)
+      replay
+    elsif cats_game? == true
+      puts "Cat's Game!"
+      replay
+    end
+  end
+
+  def x_winner?(board)
     if board[0] == board[1] && board[0] == board[2] && board[0] == 'X' ||
        board[3] == board[4] && board[3] == board[5] && board[3] == 'X' ||
        board[6] == board[7] && board[6] == board[8] && board[6] == 'X' ||
@@ -110,12 +123,11 @@ class Game
        board[2] == board[5] && board[2] == board[8] && board[2] == 'X' ||
        board[0] == board[4] && board[0] == board[8] && board[0] == 'X' ||
        board[2] == board[4] && board[2] == board[6] && board[2] == 'X'
-      puts "#{@player1} is the WINNER!".center(80)
-      replay
+      true
     end
   end
 
-  def o_winner(board)
+  def o_winner?(board)
     if board[0] == board[1] && board[0] == board[2] && board[0] == 'O' ||
        board[3] == board[4] && board[3] == board[5] && board[3] == 'O' ||
        board[6] == board[7] && board[7] == board[8] && board[6] == 'O' ||
@@ -124,11 +136,10 @@ class Game
        board[2] == board[5] && board[2] == board[8] && board[2] == 'O' ||
        board[0] == board[4] && board[0] == board[8] && board[0] == 'O' ||
        board[2] == board[4] && board[2] == board[6] && board[2] == 'O'
-      puts "#{@player2} is the WINNER!".center(80)
-      replay
+      true
     end
   end
 end
 
 ttt = Game.new('Henry', 'Sarah')
-ttt.start_game
+ttt.player_move
