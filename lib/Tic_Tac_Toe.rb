@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'pry'
+
+# intro text heredoc
 class StringDoc
   def intro_text
     puts <<-HEREDOC
@@ -15,15 +17,38 @@ class StringDoc
   end
 end
 
-# creating of display
+# creation of display
 class Board
   attr_accessor :game_board
   def initialize
     @game_board = ['', '', '', '', '', '', '', '', '']
   end
 
-  def open_position?(position)
-    game_board[position] == ''
+  def winning_combos
+    [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+      [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]
+    ]
+  end
+
+  def x_winner?
+    winning_combos.any? { |x| game_board.values_at(x[0], x[1], x[2]).all?('X') }
+  end
+
+  def o_winner?
+    winning_combos.any? { |x| game_board.values_at(x[0], x[1], x[2]).all?('O') }
+  end
+
+  def place_x_o(index, turn)
+    game_board[index] = turn
+  end
+
+  def valid_move?(move)
+    move.between?(0, 9) && open_position?(move) == false
+  end
+
+  def open_position?(move)
+    game_board[move].to_s.match?(/[XO]/)
   end
 
   def clear_board
@@ -50,44 +75,57 @@ class Board
   end
 end
 
-# creation game input
+# creation of game
 class Game
   attr_accessor :board, :move
-  attr_reader :attempts, :intro
+  attr_reader :attempts, :intro, :answer
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
     @intro = StringDoc.new
     @board = Board.new
     @turn = 'X'
+    @answer = nil
     # @move = move
   end
 
   def start_game
     intro.intro_text
-    player_move
+    p1_move
   end
 
-  def player_move
-    loop do
-      board.show_board
-      p board.game_board
-      win_cons
-      puts "\n\n\n#{@turn}, make your move".center(80)
-      @move = gets.chomp.to_i
-      board.open_position?(@move)
-      board.game_board[@move] = @turn
-      @turn == 'X' ? @turn = 'O' : @turn = 'X'
-    end
+  def p1_move
+    board.show_board
+    win_cons
+    puts "\n\n\nX, make your move".center(80)
+    @move = gets.chomp.to_i
+    board.valid_move?(@move) ? board.place_x_o(@move, 'X') : p1_move
+    p2_move
+  end
+
+  def p2_move
+    board.show_board
+    win_cons
+    puts "\n\n\nO, make your move".center(80)
+    @move = gets.chomp.to_i
+    board.valid_move?(@move) ? board.place_x_o(@move, 'O') : p2_move
+    p1_move
+  end
+
+  def replay_text
+    puts 'Would you like to play again? Y/N'.center(80)
+    @answer = gets.chomp.to_s.upcase until @answer == 'Y' || @answer == 'N'
+  end
+
+  def reset_answer
+    @answer = nil
   end
 
   def replay
-    puts 'Would you like to play again? Y/N'.center(80)
-    answer = gets.chomp.upcase until answer == 'Y' || answer == 'N'
-
-    if answer == 'Y'
+    replay_text
+    if @answer == 'Y'
       board.clear_board
-      system('clear')
+      system('clear') 
       start_game
     else
       puts "\nCya".center(80)
@@ -96,50 +134,26 @@ class Game
   end
 
   def cats_game?
-    if board.board_full? == true
-      true
-    end
+    return unless board.board_full? == true
+
+    true
   end
 
   def win_cons
-    if x_winner?(board.game_board) == true
+    if board.x_winner?
       puts "#{@player1} is the WINNER!".center(80)
+      reset_answer
       replay
-    elsif o_winner?(board.game_board) == true
+    elsif board.o_winner?
       puts "#{@player2} is the WINNER!".center(80)
+      reset_answer
       replay
-    elsif cats_game? == true
+    elsif cats_game?
       puts "Cat's Game!"
       replay
-    end
-  end
-
-  def x_winner?(board)
-    if board[0] == board[1] && board[0] == board[2] && board[0] == 'X' ||
-       board[3] == board[4] && board[3] == board[5] && board[3] == 'X' ||
-       board[6] == board[7] && board[6] == board[8] && board[6] == 'X' ||
-       board[0] == board[3] && board[0] == board[6] && board[0] == 'X' ||
-       board[1] == board[4] && board[1] == board[7] && board[1] == 'X' ||
-       board[2] == board[5] && board[2] == board[8] && board[2] == 'X' ||
-       board[0] == board[4] && board[0] == board[8] && board[0] == 'X' ||
-       board[2] == board[4] && board[2] == board[6] && board[2] == 'X'
-      true
-    end
-  end
-
-  def o_winner?(board)
-    if board[0] == board[1] && board[0] == board[2] && board[0] == 'O' ||
-       board[3] == board[4] && board[3] == board[5] && board[3] == 'O' ||
-       board[6] == board[7] && board[7] == board[8] && board[6] == 'O' ||
-       board[0] == board[3] && board[0] == board[6] && board[0] == 'O' ||
-       board[1] == board[4] && board[1] == board[7] && board[1] == 'O' ||
-       board[2] == board[5] && board[2] == board[8] && board[2] == 'O' ||
-       board[0] == board[4] && board[0] == board[8] && board[0] == 'O' ||
-       board[2] == board[4] && board[2] == board[6] && board[2] == 'O'
-      true
     end
   end
 end
 
 ttt = Game.new('Henry', 'Sarah')
-ttt.player_move
+ttt.start_game
