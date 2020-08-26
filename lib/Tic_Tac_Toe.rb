@@ -60,7 +60,7 @@ class Board
   end
 
   def board_full?
-    return unless game_board.all?(/[A-Z]/)
+    return false unless game_board.all?(/[A-Z]/)
 
     true
   end
@@ -86,7 +86,7 @@ class Game
     @board = Board.new
     @turn = 'X'
     @answer = nil
-    # @move = move
+    @move = move
   end
 
   def start_game
@@ -98,7 +98,7 @@ class Game
     board.show_board
     win_cons
     puts "\n\n\nX, make your move".center(80)
-    @move = gets.chomp.to_i
+    get_guess
     board.valid_move?(@move) ? board.place_x_o(@move, 'X') : p1_move
     p2_move
   end
@@ -107,9 +107,17 @@ class Game
     board.show_board
     win_cons
     puts "\n\n\nO, make your move".center(80)
-    @move = gets.chomp.to_i
+    get_guess
     board.valid_move?(@move) ? board.place_x_o(@move, 'O') : p2_move
     p1_move
+  end
+
+  def get_guess(default_input = gets.chomp)
+    @move = Integer(default_input) rescue false
+    return @move if @move
+
+    puts 'Please enter an Integer.'
+    get_guess
   end
 
   def replay_text
@@ -125,7 +133,7 @@ class Game
     replay_text
     if @answer == 'Y'
       board.clear_board
-      system('clear') 
+      system('clear')
       start_game
     else
       puts "\nCya".center(80)
@@ -155,5 +163,5 @@ class Game
   end
 end
 
-ttt = Game.new('Henry', 'Sarah')
-ttt.start_game
+# ttt = Game.new('Henry', 'Sarah')
+# ttt.start_game

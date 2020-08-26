@@ -117,17 +117,6 @@ end
   
 describe Board do
   subject(:board) { described_class.new }
-  describe '#open_position?' do
-    context 'when position is taken' do
-      before do
-        board.game_board = ['X', '', '', '', '', '', '', '', '']
-      end
-      it 'returns false' do
-        @move = 0
-        expect(board.open_position?(@move)).to be(true)
-      end
-    end
-  end
   describe '#valid_move?' do
     context 'when position is not taken and input correct' do
       before do
@@ -138,41 +127,42 @@ describe Board do
         expect(board.valid_move?(@move)).to be(true)
       end
     end
-    context 'when position is not taken but input incorrect' do
+    context 'when position IS taken' do
       before do
         board.game_board = ['X', '', '', '', '', '', '', '', '']
       end
       it 'returns false' do
-        @move = 6
+        @move = 0
         expect(board.valid_move?(@move)).to be(false)
       end
     end
   end
+  describe '#clear_board' do
+    context 'when game restarts' do
+      before do
+        board.game_board = %w[O X O X O X O X O]
+      end
+      it 'empties game_board array' do
+        expect(board.clear_board).to eq(['', '', '', '', '', '', '', '', ''])
+      end
+    end
+  end
+  describe '#board_full?' do
+    context 'when @move input is recieved' do
+      before do
+        board.game_board = %w[O X O X O X O X O]
+      end
+      it 'returns true if board is full' do
+        expect(board.board_full?).to be(true)
+      end
+    end
+    context 'when @move input is recieved' do
+      before do
+        board.game_board = ['X', '', '', '', '', '', '', '', '']
+      end
+      it 'returns false if board is not full' do
+        expect(board.board_full?).to be(false)
+      end
+    end
+  end
 end
-
-# describe Game do
-#   subject(:game) { Game.new('Henry', 'Sarah') }
-#   describe '#clear_board' do
-#     it 'clears the board array' do
-#       expect(game.clear_board).to eql(['', '', '', '', '', '', '', '', ''])
-#     end
-#   end
-
-#   describe '#position_taken' do
-#     context 'if player selects taken space' do
-#       let(:move) { move = 1 }
-#       subject(:board) { Board.new }
-
-#       before do
-#         board.game_board = ['X', '', '', '', '', '', '', '', '']
-#       end
-
-#       it 'returns error message' do
-
-#         error_message = 'That space is taken. Please guess again.'
-
-#         expect { game.position_taken[move] }.to output(error_message).to_stdout
-#       end
-#     end
-#   end
-# end
