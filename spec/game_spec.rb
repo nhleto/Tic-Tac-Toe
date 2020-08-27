@@ -44,20 +44,6 @@ describe Game do
         game.p1_move
       end
     end
-    context 'when selected position is not available' do
-      move = '1'
-      before do
-        allow(game).to receive(:gets).and_return(move)
-        allow(game).to receive(:p2_move)
-        allow_any_instance_of(Board).to receive(:show_board)
-        allow(game).to receive(:puts)
-        allow(game.board).to receive(:valid_move?).once.and_return(false)
-      end
-      it 'restarts p1_move' do
-        expect(game.board).to receive(:valid_move?).and_return(false)
-        game.p1_move
-      end
-    end
   end
   describe '#cats_game?' do
     context 'if the board is full' do
