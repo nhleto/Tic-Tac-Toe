@@ -142,7 +142,7 @@ class Game
   end
 
   def cats_game?
-    return unless board.board_full? == true
+    return false unless board.board_full? == true
 
     true
   end
