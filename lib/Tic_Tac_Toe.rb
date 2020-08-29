@@ -67,11 +67,11 @@ class Board
 
   def show_board
     puts "\n\n"
-    puts " #{game_board[0]} | #{game_board[1]} | #{game_board[2]} ".center(80)
-    puts '-----------'.center(80)
-    puts " #{game_board[3]} | #{game_board[4]} | #{game_board[5]} ".center(80)
-    puts '-----------'.center(80)
-    puts " #{game_board[6]} | #{game_board[7]} | #{game_board[8]} ".center(80)
+    puts " #{game_board[0]} | #{game_board[1]} | #{game_board[2]} "
+    puts '-----------'
+    puts " #{game_board[3]} | #{game_board[4]} | #{game_board[5]} "
+    puts '-----------'
+    puts " #{game_board[6]} | #{game_board[7]} | #{game_board[8]} "
   end
 end
 
@@ -97,7 +97,7 @@ class Game
   def p1_move
     board.show_board
     win_cons
-    puts "\n\n\⛦".green + " , make your move".cyan
+    puts "\n\n\⛦".green + ' , make your move'.cyan
     get_guess
     spot_taken_p1(@move)
     p2_move
@@ -106,7 +106,7 @@ class Game
   def p2_move
     board.show_board
     win_cons
-    puts "\n\n\⛭".red + " , make your move".cyan
+    puts "\n\n\⛭".red + ' , make your move'.cyan
     get_guess
     spot_taken_p2(@move)
     p1_move
@@ -123,7 +123,7 @@ class Game
 
   def spot_taken_p2(move)
     if board.valid_move?(move)
-      board.place_x_o(move, '⛭'.yellow)
+      board.place_x_o(move, '⛭'.red)
     else
       puts 'Sorry, that spot is taken. Please guess again.'.red
       p2_move
@@ -131,7 +131,11 @@ class Game
   end
 
   def get_guess(default_input = gets.chomp)
-    @move = Integer(default_input) rescue false
+    @move = begin
+              Integer(default_input)
+            rescue StandardError
+              false
+            end
     return @move if @move
 
     puts 'Please enter an Integer.'.red
@@ -181,5 +185,6 @@ class Game
   end
 end
 
+p 'Nhleto'.red
 ttt = Game.new('Henry', 'Sarah')
 ttt.start_game
