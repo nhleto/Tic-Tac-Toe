@@ -1,0 +1,2 @@
+language = "ruby"
+run = "ruby ./lib/Tic_Tac_Toe.rb"

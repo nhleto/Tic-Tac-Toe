@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 # intro text heredoc
 class StringDoc
   def intro_text
@@ -99,7 +97,7 @@ class Game
     win_cons
     puts "\n\n\nX, make your move".center(80)
     get_guess
-    board.valid_move?(@move) ? board.place_x_o(@move, 'X') : p1_move
+    spot_taken_p1(@move)
     p2_move
   end
 
@@ -108,8 +106,26 @@ class Game
     win_cons
     puts "\n\n\nO, make your move".center(80)
     get_guess
-    board.valid_move?(@move) ? board.place_x_o(@move, 'O') : p2_move
+    spot_taken_p2(@move)
     p1_move
+  end
+
+  def spot_taken_p1(move)
+    if board.valid_move?(move)
+      board.place_x_o(move, 'X')
+    else
+      puts 'Sorry, that spot is taken. Please guess again.'
+      p1_move
+    end
+  end
+
+  def spot_taken_p2(move)
+    if board.valid_move?(move)
+      board.place_x_o(move, 'O')
+    else
+      puts 'Sorry, that spot is taken. Please guess again.'
+      p2_move
+    end
   end
 
   def get_guess(default_input = gets.chomp)
@@ -163,5 +179,5 @@ class Game
   end
 end
 
-# ttt = Game.new('Henry', 'Sarah')
-# ttt.start_game
+ttt = Game.new('Henry', 'Sarah')
+ttt.start_game
