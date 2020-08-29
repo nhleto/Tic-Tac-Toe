@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require './.bundle/ruby/2.5.0/gems/colorize-0.8.1/lib/colorize'
+
 # intro text heredoc
 class StringDoc
   def intro_text
@@ -30,11 +32,11 @@ class Board
   end
 
   def x_winner?
-    winning_combos.any? { |x| game_board.values_at(x[0], x[1], x[2]).all?('X') }
+    winning_combos.any? { |x| game_board.values_at(x[0], x[1], x[2]).all?('⛦') }
   end
 
   def o_winner?
-    winning_combos.any? { |x| game_board.values_at(x[0], x[1], x[2]).all?('O') }
+    winning_combos.any? { |x| game_board.values_at(x[0], x[1], x[2]).all?('⛭') }
   end
 
   def place_x_o(index, turn)
@@ -46,7 +48,7 @@ class Board
   end
 
   def open_position?(move)
-    game_board[move].to_s.match?(/[XO]/)
+    game_board[move].to_s.match?(/[⛦⛭]/)
   end
 
   def clear_board
@@ -58,7 +60,7 @@ class Board
   end
 
   def board_full?
-    return false unless game_board.all?(/[A-Z]/)
+    return false unless game_board.all?(/[⛦⛭]/)
 
     true
   end
@@ -82,7 +84,7 @@ class Game
     @player2 = player2
     @intro = StringDoc.new
     @board = Board.new
-    @turn = 'X'
+    @turn = @symbol1
     @answer = nil
     @move = move
   end
@@ -95,7 +97,7 @@ class Game
   def p1_move
     board.show_board
     win_cons
-    puts "\n\n\nX, make your move".center(80)
+    puts "\n\n\⛦".green + " , make your move".cyan
     get_guess
     spot_taken_p1(@move)
     p2_move
@@ -104,7 +106,7 @@ class Game
   def p2_move
     board.show_board
     win_cons
-    puts "\n\n\nO, make your move".center(80)
+    puts "\n\n\⛭".red + " , make your move".cyan
     get_guess
     spot_taken_p2(@move)
     p1_move
@@ -112,18 +114,18 @@ class Game
 
   def spot_taken_p1(move)
     if board.valid_move?(move)
-      board.place_x_o(move, 'X')
+      board.place_x_o(move, '⛦'.green)
     else
-      puts 'Sorry, that spot is taken. Please guess again.'
+      puts 'Sorry, that spot is taken. Please guess again.'.red
       p1_move
     end
   end
 
   def spot_taken_p2(move)
     if board.valid_move?(move)
-      board.place_x_o(move, 'O')
+      board.place_x_o(move, '⛭'.yellow)
     else
-      puts 'Sorry, that spot is taken. Please guess again.'
+      puts 'Sorry, that spot is taken. Please guess again.'.red
       p2_move
     end
   end
@@ -132,12 +134,12 @@ class Game
     @move = Integer(default_input) rescue false
     return @move if @move
 
-    puts 'Please enter an Integer.'
+    puts 'Please enter an Integer.'.red
     get_guess
   end
 
   def replay_text
-    puts 'Would you like to play again? Y/N'.center(80)
+    puts 'Would you like to play again? Y/N'.yellow.center(95)
     @answer = gets.chomp.to_s.upcase until @answer == 'Y' || @answer == 'N'
   end
 
@@ -152,7 +154,7 @@ class Game
       system('clear')
       start_game
     else
-      puts "\nCya".center(80)
+      puts "\nCya".green
       exit
     end
   end
@@ -165,15 +167,15 @@ class Game
 
   def win_cons
     if board.x_winner?
-      puts "#{@player1} is the WINNER!".center(80)
+      puts "#{@player1} is the WINNER!".green.center(98)
       reset_answer
       replay
     elsif board.o_winner?
-      puts "#{@player2} is the WINNER!".center(80)
+      puts "#{@player2} is the WINNER!".green.center(98)
       reset_answer
       replay
     elsif cats_game?
-      puts "Cat's Game!"
+      puts "Cat's Game!".green
       replay
     end
   end
