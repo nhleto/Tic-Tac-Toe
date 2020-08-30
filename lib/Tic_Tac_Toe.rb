@@ -67,11 +67,11 @@ class Board
 
   def show_board
     puts "\n\n"
-    puts " #{game_board[0]} | #{game_board[1]} | #{game_board[2]} ".center(95).yellow
-    puts '-----------'.center(95).yellow
-    puts " #{game_board[3]} | #{game_board[4]} | #{game_board[5]} ".center(95).yellow
-    puts '-----------'.center(95).yellow
-    puts " #{game_board[6]} | #{game_board[7]} | #{game_board[8]} ".center(95).yellow
+    puts " #{game_board[0]}" + " | #{game_board[1]} | #{game_board[2]} ".center(85)
+    puts '-----------'.center(85).yellow
+    puts " #{game_board[3]} | #{game_board[4]} | #{game_board[5]} ".center(85)
+    puts '-----------'.center(85).yellow
+    puts " #{game_board[6]} | #{game_board[7]} | #{game_board[8]} ".center(85)
   end
 end
 
@@ -142,7 +142,7 @@ class Game
   end
 
   def replay_text
-    puts 'Would you like to play again? Y/N'.center(95).yellow
+    puts 'Would you like to play again? Y/N'.center(85).yellow
     @answer = gets.chomp.to_s.upcase until @answer == 'Y' || @answer == 'N'
   end
 
@@ -170,11 +170,11 @@ class Game
 
   def win_cons
     if board.x_winner?
-      puts "#{@player1} is the WINNER!".center(95).green
+      puts "#{@player1} is the WINNER!".center(85).green
       reset_answer
       replay
     elsif board.o_winner?
-      puts "#{@player2} is the WINNER!".center(95).green
+      puts "#{@player2} is the WINNER!".center(85).green
       reset_answer
       replay
     elsif cats_game?
