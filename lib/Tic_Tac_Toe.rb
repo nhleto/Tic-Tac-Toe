@@ -21,7 +21,7 @@ end
 class Board
   attr_accessor :game_board
   def initialize
-    @game_board = ['', '', '', '', '', '', '', '', '']
+    @game_board = Array.new(9)
   end
 
   def winning_combos
@@ -67,11 +67,11 @@ class Board
 
   def show_board
     puts "\n\n"
-    puts " #{game_board[0]} | #{game_board[1]} | #{game_board[2]} "
-    puts '-----------'
-    puts " #{game_board[3]} | #{game_board[4]} | #{game_board[5]} "
-    puts '-----------'
-    puts " #{game_board[6]} | #{game_board[7]} | #{game_board[8]} "
+    puts " #{game_board[0]} | #{game_board[1]} | #{game_board[2]} ".center(95).yellow
+    puts '-----------'.center(95).yellow
+    puts " #{game_board[3]} | #{game_board[4]} | #{game_board[5]} ".center(95).yellow
+    puts '-----------'.center(95).yellow
+    puts " #{game_board[6]} | #{game_board[7]} | #{game_board[8]} ".center(95).yellow
   end
 end
 
@@ -84,7 +84,6 @@ class Game
     @player2 = player2
     @intro = StringDoc.new
     @board = Board.new
-    @turn = @symbol1
     @answer = nil
     @move = move
   end
@@ -114,7 +113,7 @@ class Game
 
   def spot_taken_p1(move)
     if board.valid_move?(move)
-      board.place_x_o(move, '⛦'.green)
+      board.place_x_o(move, '⛦')
     else
       puts 'Sorry, that spot is taken. Please guess again.'.red
       p1_move
@@ -123,7 +122,7 @@ class Game
 
   def spot_taken_p2(move)
     if board.valid_move?(move)
-      board.place_x_o(move, '⛭'.red)
+      board.place_x_o(move, '⛭')
     else
       puts 'Sorry, that spot is taken. Please guess again.'.red
       p2_move
@@ -143,7 +142,7 @@ class Game
   end
 
   def replay_text
-    puts 'Would you like to play again? Y/N'.yellow.center(95)
+    puts 'Would you like to play again? Y/N'.center(95).yellow
     @answer = gets.chomp.to_s.upcase until @answer == 'Y' || @answer == 'N'
   end
 
@@ -171,11 +170,11 @@ class Game
 
   def win_cons
     if board.x_winner?
-      puts "#{@player1} is the WINNER!".green.center(98)
+      puts "#{@player1} is the WINNER!".center(95).green
       reset_answer
       replay
     elsif board.o_winner?
-      puts "#{@player2} is the WINNER!".green.center(98)
+      puts "#{@player2} is the WINNER!".center(95).green
       reset_answer
       replay
     elsif cats_game?
@@ -185,6 +184,5 @@ class Game
   end
 end
 
-p 'Nhleto'.red
 ttt = Game.new('Henry', 'Sarah')
 ttt.start_game
