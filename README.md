@@ -8,4 +8,4 @@ Write tests for your Tic Tac Toe project. In this situation, it’s not quite as
 
 3. Try using mocks/doubles to isolate methods and make sure that they’re sending back the right outputs.
 
-[[Repl.it link]](https://repl.it/@nhleto/Tic-Tac-Toe#README.md)
+[Repl.it link](https://repl.it/@nhleto/Tic-Tac-Toe#README.md)
